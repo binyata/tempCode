@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import { Link, Redirect } from 'react-router-dom'
-import { test } from 'action/AuthActions'
+import { loginAction, generalStoreTask } from 'actions/AuthActions'
 import OcrLogo from 'img/OcrLogo'
+
+/**
+1. Understand more about autoComplete attribute
+*/
 
 class Login extends Component {
   constructor(props) {
@@ -23,29 +27,29 @@ class Login extends Component {
     // let submittedPassword = this.state.password
     let submittedUserName = 'thomaslee'
     let submittedPassword = '1Starcraftnerd!'
-    // this.setState({
-    //   username: '',
-    //   password: '',
-    //   buttonIsDisabled: "",
-    // })
-    test()
+    this.setState({
+      username: '',
+      password: '',
+      buttonIsDisabled: "",
+    })
     // better to run the logical operations on the API side
-    // loginAction(submittedUserName, submittedPassword).then(res => {
-    //   console.log('successful')
-    //   this.setState({
-    //     buttonIsDisabled: "disabled",
-    //     loggedIn: true,
-    //   })
-    //   generalStoreTask(res)
-    // }).catch(error => {
-    //   console.log('failed')
-    //   // more error logic...
-    //   console.log(error)
-    //   this.setState({
-    //     buttonIsDisabled: "disabled",
-    //   })
-    // })
+    loginAction(submittedUserName, submittedPassword).then(res => {
+      console.log('successful')
+      this.setState({
+        buttonIsDisabled: "disabled",
+        loggedIn: true,
+      })
+      generalStoreTask(res)
+    }).catch(error => {
+      console.log('failed')
+      // more error logic...
+      console.log(error)
+      this.setState({
+        buttonIsDisabled: "disabled",
+      })
+    })
   }
+  // depending on auth permissions, redirect can go to either S&S or client page
   render() {
     const { username, password, buttonIsDisabled } = this.state
     if (this.state.loggedIn === true) {
@@ -54,25 +58,29 @@ class Login extends Component {
     return (
       <div>
         <OcrLogo />
-        <input
-          placeholder="username"
-          name="username"
-          value={username}
-          onChange={this.onChange}
-        />
-        <input
-          type="password"
-          placeholder="password"
-          name="password"
-          value={password}
-          onChange={this.onChange}
-        />
-        <input
-          type="button"
-          value="Login"
-          disabled={!buttonIsDisabled}
-          onClick={(event) => this.loginSubmit(event)}
-        />
+        <form>
+          <input
+            placeholder="username"
+            name="username"
+            value={username}
+            onChange={this.onChange}
+            autoComplete="current-user"
+          />
+          <input
+            type="password"
+            placeholder="password"
+            name="password"
+            value={password}
+            onChange={this.onChange}
+            autoComplete="current-password"
+          />
+          <input
+            type="button"
+            value="Login"
+            disabled={!buttonIsDisabled}
+            onClick={(event) => this.loginSubmit(event)}
+          />
+        </form>
 
         <div>
           <p>

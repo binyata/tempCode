@@ -1,16 +1,17 @@
 import axios from 'axios'
 import ImmutableState from 'utils/ImmutableState'
 import {
-  SETUP_OCR_ADMIN,
-  SETUP_OCR_ADMIN_CLIENT,
-  SETUP_OCR_CATALOG_ATTRIBUTES,
-  SETUP_OCR_CLIENT,
-  SETUP_OCR_CLIENT_COLORS,
-  SETUP_OCR_JWTS,
-  SETUP_OCR_PROMO_TYPES,
-  SETUP_OCR_SUBSCRIPTIONS,
-  SETUP_OCR_TOKENS,
-  SETUP_OCR_USER,
+  SETUP_OCR_CATALOG_ATTRIBUTES_REQUEST
+  // SETUP_OCR_ADMIN,
+  // SETUP_OCR_ADMIN_CLIENT,
+  // SETUP_OCR_CATALOG_ATTRIBUTES,
+  // SETUP_OCR_CLIENT,
+  // SETUP_OCR_CLIENT_COLORS,
+  // SETUP_OCR_JWTS,
+  // SETUP_OCR_PROMO_TYPES,
+  // SETUP_OCR_SUBSCRIPTIONS,
+  // SETUP_OCR_TOKENS,
+  // SETUP_OCR_USER,
 } from './Types'
 import store from 'store'
 
@@ -21,12 +22,11 @@ NOTES
 3. will most likely send all returned data to redux to be used throughout site
 4. Figure out a way to run promos as a background process. Probably will work well with notification system
 */
+export const dispatchCatalogInfo = (info) => dispatch => {dispatch({type: SETUP_OCR_CATALOG_ATTRIBUTES_REQUEST, payload: info})}
+// export const dispatchCatalogInfo = (info) => dispatch => {dispatch({type: SETUP_OCR_CATALOG_ATTRIBUTES, payload: info})}
+// export const dispatchColorInfo = (info) => dispatch => {dispatch({type: SETUP_OCR_CLIENT_COLORS, payload: info})}
 
-// export const fetchTecomTrafficItemsSuccess = ({ params, response }) => ({ type: FETCH_TECOM_TRAFFIC_ITEMS_SUCCESS, params, response });
-// export const fetchTecomTrafficItemsFailure = ({ params, response }) => ({ type: FETCH_TECOM_TRAFFIC_ITEMS_FAILURE, params, response });
-
-
-export function loginAction(user, pw) {
+export const loginAction = (user, pw) => {
   let data = {
         username: user,
         password: pw
@@ -35,7 +35,7 @@ export function loginAction(user, pw) {
   return axios.post(url, data)
 }
 
-export function generalStoreTask(dataStorage) {
+export const generalStoreTask = (dataStorage) => {
   // Store User/admin info to local storage:
   storeClientUserToken(dataStorage).then(() => {
     // Store Subscription information
@@ -46,35 +46,30 @@ export function generalStoreTask(dataStorage) {
 
     // Store Catalog Info
     storeCatalogInfo()
-
-    test()
   }).catch(error => {
     console.log(error)
   })
 }
 
-export function test() {
-  console.log("testing...")
-  store.dispatch(disExample())
+function updateDefaultHeaders(key) {
+  switch(key) {
+    case 'user':
+      axios.defaults.headers.common['X-USER-UUID'] = JSON.parse(window.localStorage.getItem('setup-ocr-user')).uuid
+      break
+    case 'admin':
+      axios.defaults.headers.common['X-ADMIN-UUID'] = JSON.parse(window.localStorage.getItem('setup-ocr-admin')).uuid
+      break
+    case 'jwts':
+      axios.defaults.headers.common['Authorization'] = `Bearer ${JSON.parse(window.localStorage.getItem('setup-ocr-jwts')).admin}`
+      break
+    case 'tokens':
+      axios.defaults.headers.common['X-API-KEY'] = JSON.parse(window.localStorage.getItem('setup-ocr-tokens')).admin
+      break
+    default: null
+  }
 }
 
-export const disExample = () => dispatch => {
-  let data = {
-        username: 'thomaslee',
-        password: '1Starcraftnerd!'
-      }
-  console.log("does this shit work?")
-  let url = 'http://ocr-api.web:80/v2/user_auth/login'
-  return axios.post(url, data).then(res => {
-    console.log("RETURN SOMETHING PLEASE")
-    dispatch({
-      type: SETUP_OCR_ADMIN,
-      payload: res
-    })
-  })
-}
-
-async function storeClientUserToken(dataStorage) {
+const storeClientUserToken = async(dataStorage) => {
   window.localStorage.clear();
   let storage = dataStorage.data.data
   storage['tokens'] = dataStorage.data.tokens
@@ -86,12 +81,17 @@ async function storeClientUserToken(dataStorage) {
     if (value !== null && value !== undefined) {
       let fullKeyName = `setup-ocr-${key}`
       window.localStorage.setItem(fullKeyName, JSON.stringify(value))
+      if(key === 'user' || key === 'admin'
+                        || key === 'jwts'
+                        || key === 'tokens') {
+        updateDefaultHeaders(key)
+      }
     }
   }
   keys.forEach(key => setKey(key, storage[key]));
 }
 
-function storeSubscriptions() {
+const storeSubscriptions = () => {
   let sendToLocalStorage = function(res) {
     if (localStorage.getItem("setup-ocr-subscriptions") === null) {
       window.localStorage.setItem("setup-ocr-subscriptions", JSON.stringify(res.data.data))
@@ -103,15 +103,7 @@ function storeSubscriptions() {
   let clientUUID = JSON.parse(window.localStorage.getItem('setup-ocr-client')).uuid
   //let clientUUID = "53cfb3ca848c3"
   let url = `http://ocr-api.web:80/v4/admin/clients/${clientUUID}/subscriptions`
-  const config = {
-    headers: {
-      'X-USER-UUID': JSON.parse(window.localStorage.getItem('setup-ocr-user')).uuid,
-      'X-ADMIN-UUID': JSON.parse(window.localStorage.getItem('setup-ocr-admin')).uuid,
-      'Authorization': `Bearer ${JSON.parse(window.localStorage.getItem('setup-ocr-jwts')).admin}`,
-      'X-API-KEY': JSON.parse(window.localStorage.getItem('setup-ocr-tokens')).admin
-    }
-  }
-  axios.get(url, config).then( res => {
+  axios.get(url).then( res => {
     console.log("returning subscriptions-v4")
     sendToLocalStorage(res)
   })
@@ -122,12 +114,6 @@ function storeSubscriptions() {
       //client_uuid: "53cfb3ca848c3",
       client_uuid: JSON.parse(window.localStorage.getItem('setup-ocr-client')).uuid,
       user_uuid: JSON.parse(window.localStorage.getItem('setup-ocr-user')).uuid
-    },
-    headers: {
-      'X-USER-UUID': JSON.parse(window.localStorage.getItem('setup-ocr-user')).uuid,
-      'X-ADMIN-UUID': JSON.parse(window.localStorage.getItem('setup-ocr-admin')).uuid,
-      'Authorization': `Bearer ${JSON.parse(window.localStorage.getItem('setup-ocr-jwts')).admin}`,
-      'X-API-KEY': JSON.parse(window.localStorage.getItem('setup-ocr-tokens')).admin
     }
   }
   axios.get(url2, config2).then( res => {
@@ -148,51 +134,39 @@ function storeSubscriptions() {
   })
 }
 
-function storeClientColors() {
+const storeClientColors = () => {
   let clientUUID = JSON.parse(window.localStorage.getItem('setup-ocr-client')).uuid
   let url = `http://ocr-api.web:80/v2/clients/${clientUUID}/client_prefs`
-  const config = {
-    headers: {
-      'X-USER-UUID': JSON.parse(window.localStorage.getItem('setup-ocr-user')).uuid,
-      'X-ADMIN-UUID': JSON.parse(window.localStorage.getItem('setup-ocr-admin')).uuid,
-      'Authorization': `Bearer ${JSON.parse(window.localStorage.getItem('setup-ocr-jwts')).admin}`,
-      'X-API-KEY': JSON.parse(window.localStorage.getItem('setup-ocr-tokens')).admin
-    }
-  }
-  axios.get(url, config).then(pref => {
+  axios.get(url).then(pref => {
     console.log("results of color prefs")
     let prefColors = pref.data.data.filter( function(el) {
       return el.name === 'client_colors'
     })
     window.localStorage.setItem("setup-ocr-client-colors", prefColors[0].value)
+    //store.dispatch(dispatchColorInfo(JSON.parse(prefColors[0].value)))
   })
 }
 
-function storeCatalogInfo() {
+const storeCatalogInfo = () => {
   let clientUUID = JSON.parse(window.localStorage.getItem('setup-ocr-client')).uuid
   let url = `http://ocr-api.web:80/v2/clients/${clientUUID}/catalog_attributes`
   const config = {
     params: {
       client_uuid: JSON.parse(window.localStorage.getItem('setup-ocr-client')).uuid,
-    },
-    headers: {
-      'X-USER-UUID': JSON.parse(window.localStorage.getItem('setup-ocr-user')).uuid,
-      'X-ADMIN-UUID': JSON.parse(window.localStorage.getItem('setup-ocr-admin')).uuid,
-      'Authorization': `Bearer ${JSON.parse(window.localStorage.getItem('setup-ocr-jwts')).admin}`,
-      'X-API-KEY': JSON.parse(window.localStorage.getItem('setup-ocr-tokens')).admin
     }
   }
-  axios.get(url, config).then(res => {
+  axios.get(url).then(res => {
     window.localStorage.setItem("setup-ocr-catalog-attributes", JSON.stringify(res.data.data))
+    store.dispatch(dispatchCatalogInfo(res.data.data))
   })
 }
 
-function storePromos() {
+const storePromos = () => {
   // const clientUUID = ImmutableState.client().uuid;
   // const url = `/v2/clients/${clientUUID}/promo_types`;
   // return ManagePromoDatacontext.dc.get(url, params).then(({ data }) => data);
 }
 
-export function logout() {
+export const logout = () => {
   localStorage.clear();
 }

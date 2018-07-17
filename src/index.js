@@ -1,11 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {HashRouter, Route, Switch} from 'react-router-dom'
 import { Provider } from 'react-redux'
-import { createStore, applyMiddleware, compose } from 'redux'
-import rootReducer from './rootReducer.js'
-import { createLogger } from 'redux-logger'
-import thunkMiddleware from 'redux-thunk'
 import Routes from './components/Routes'
 import store from './store';
 // https://www.valentinog.com/blog/react-redux-tutorial-beginners/ redux tut
@@ -18,31 +13,12 @@ if (localStorage.jwtToken) {
 }
 */
 
-// window.devToolsExtension ? window.devToolsExtension() : f => f -- may use for dev purposes
-//
-// ReactDOM.render((
-// 	<Provider store={store}>
-// 	  <HashRouter>
-// 	    <Switch>
-// 	      <AppContainer/>
-// 	    </Switch>
-// 	  </HashRouter>
-//   	</Provider>
-// ), document.getElementById('root'));
-
-
-// const store = createStore(
-//   rootReducer,
-//   compose(
-//     applyMiddleware(...middleware),
-//     window.devToolsExtension ? window.devToolsExtension() : f => f
-//   )
-// );
-ReactDOM.render((
-  <Provider store={store}>
-    <Routes />
-  </Provider>
-), document.getElementById('id')
+ReactDOM.render(
+  (
+    <Provider store={store}>
+      <Routes />
+    </Provider>
+  ), document.getElementById('id')
 );
 
 
@@ -75,4 +51,9 @@ https://netbasal.com/how-to-secure-your-users-data-after-logout-in-redux-30468c6
 
 https://redux.js.org/basics/example-todo-list
 https://github.com/Remchi/reddice/blob/master/client/index.js
+
+// more info about middleware
+https://medium.com/@meagle/understanding-87566abcfb7a
+// request/success/failure redux dispatches
+https://medium.com/skyshidigital/simplify-redux-request-success-failure-pattern-ce77340eae06
 */
