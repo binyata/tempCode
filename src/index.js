@@ -1,70 +1,78 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Routes from './components/Routes';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {HashRouter, Route, Switch} from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware, compose } from 'redux'
+import rootReducer from './rootReducer.js'
+import { createLogger } from 'redux-logger'
+import thunkMiddleware from 'redux-thunk'
+import Routes from './components/Routes'
+import store from './store';
 // https://www.valentinog.com/blog/react-redux-tutorial-beginners/ redux tut
 /*
-const store = createStore(
-  rootReducer,
-  compose(
-    applyMiddleware(thunk),
-    window.devToolsExtension ? window.devToolsExtension() : f => f
-  )
-);
 
+// to kick out of website if no longer stored on local storage
 if (localStorage.jwtToken) {
   setAuthorizationToken(localStorage.jwtToken);
   store.dispatch(setCurrentUser(jwtDecode(localStorage.jwtToken)));
 }
 */
-ReactDOM.render(<Routes />, document.getElementById('root'));
 
+// window.devToolsExtension ? window.devToolsExtension() : f => f -- may use for dev purposes
+//
+// ReactDOM.render((
+// 	<Provider store={store}>
+// 	  <HashRouter>
+// 	    <Switch>
+// 	      <AppContainer/>
+// 	    </Switch>
+// 	  </HashRouter>
+//   	</Provider>
+// ), document.getElementById('root'));
+
+
+// const store = createStore(
+//   rootReducer,
+//   compose(
+//     applyMiddleware(...middleware),
+//     window.devToolsExtension ? window.devToolsExtension() : f => f
+//   )
+// );
+ReactDOM.render((
+  <Provider store={store}>
+    <Routes />
+  </Provider>
+), document.getElementById('id')
+);
 
 
 /*
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {HashRouter, Route, Switch} from 'react-router-dom';
-import { Provider } from 'react-redux'
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from './combineReducers.js';
-import { createLogger } from 'redux-logger';
-import thunkMiddleware from 'redux-thunk';
+Use redux if it is common information that can be used in multiple components.
+Use state if it is unique to one component
+Import css files in this file
 
-// Styles
-// Import Font Awesome Icons Set
-import 'font-awesome/css/font-awesome.min.css';
-// Import Simple Line Icons Set
-import 'simple-line-icons/css/simple-line-icons.css';
-// Import Main styles for this application
-import './styles/style.css'
-// Temp fix for reactstrap
-import './styles/core/_dropdown-menu-right.scss'
-// Import styles for react select component
-import 'react-select/dist/react-select.css';
+https://blog.cloudboost.io/persisting-data-with-localstorage-and-redux-middleware-4760fd6afdef
+Use localStorage when:
 
-// Containers
-import AppContainer from './app/AppContainer.js';
+you need to securely persist data
+you need support across browsers (IE. 8+)
+you need to cache relatively large datasets (up to 5mb)
+you want a straightforward API
+Use middleware when:
 
-const loggerMiddleware = createLogger();
-const middleware = process.env.NODE_ENV !== 'production'
-  ? [ thunkMiddleware, loggerMiddleware ]
-  : [ thunkMiddleware ];
+you use Redux
+you want to centralize your use of localStorage
+you want to extend the utility of your actions
 
-const store = createStore(
-  rootReducer,
-  {appReducer: {	//setting default values
-  	selectedClient: 1}
-  },
-  applyMiddleware(...middleware)
-);
+best way to store tokens in redux:
+https://michaelwashburnjr.com/best-way-to-store-tokens-redux/
 
-ReactDOM.render((
-	<Provider store={store}>
-	  <HashRouter>
-	    <Switch>
-	      <AppContainer/>
-	    </Switch>
-	  </HashRouter>
-  	</Provider>
-), document.getElementById('root'));
+redux video on local storage -- Dan Abramov
+https://egghead.io/lessons/javascript-redux-persisting-the-state-to-the-local-storage
+
+Logout info:
+https://netbasal.com/how-to-secure-your-users-data-after-logout-in-redux-30468c6848e8
+
+https://redux.js.org/basics/example-todo-list
+https://github.com/Remchi/reddice/blob/master/client/index.js
 */

@@ -1,11 +1,11 @@
 import React from 'react'
-import Home from './Components/Home'
+import Login from './components/Login'
 
 class App extends React.Component {
   render() {
     return (
       <div>
-        <Home />
+        <Login />
       </div>
     )
   }

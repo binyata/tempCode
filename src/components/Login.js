@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { Link, Redirect } from 'react-router-dom'
-import { Authentication } from 'action/Authentication'
+import { test } from 'action/AuthActions'
 import OcrLogo from 'img/OcrLogo'
 
-class Home extends Component {
+class Login extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -23,27 +23,28 @@ class Home extends Component {
     // let submittedPassword = this.state.password
     let submittedUserName = 'thomaslee'
     let submittedPassword = '1Starcraftnerd!'
-    this.setState({
-      username: '',
-      password: '',
-      buttonIsDisabled: "",
-    })
+    // this.setState({
+    //   username: '',
+    //   password: '',
+    //   buttonIsDisabled: "",
+    // })
+    test()
     // better to run the logical operations on the API side
-    Authentication.login(submittedUserName, submittedPassword).then(res => {
-      console.log('successful')
-      this.setState({
-        buttonIsDisabled: "disabled",
-        loggedIn: true,
-      })
-      Authentication.generalStoreTask(res)
-    }).catch(error => {
-      console.log('failed')
-      // more error logic...
-      console.log(error)
-      this.setState({
-        buttonIsDisabled: "disabled",
-      })
-    })
+    // loginAction(submittedUserName, submittedPassword).then(res => {
+    //   console.log('successful')
+    //   this.setState({
+    //     buttonIsDisabled: "disabled",
+    //     loggedIn: true,
+    //   })
+    //   generalStoreTask(res)
+    // }).catch(error => {
+    //   console.log('failed')
+    //   // more error logic...
+    //   console.log(error)
+    //   this.setState({
+    //     buttonIsDisabled: "disabled",
+    //   })
+    // })
   }
   render() {
     const { username, password, buttonIsDisabled } = this.state
@@ -120,4 +121,4 @@ class Home extends Component {
     )
   }
 };
-export default Home;
+export default Login;
