@@ -13,7 +13,6 @@ sudo n 4.4.2
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const frontendChoice = 'reactjs';
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 
 module.exports = {
@@ -35,7 +34,17 @@ module.exports = {
       },
       { test: /\.html$/i, loader: 'html-loader'},
 			{
-        test: /\.js$/i, loader: 'babel-loader', exclude: nodeModulesDir,
+        test: /\.js$/i,
+        loader: 'babel-loader',
+        options: {
+          // This is a feature of `babel-loader` for webpack (not Babel itself).
+          // It enables caching results in ./node_modules/.cache/babel-loader/
+          // directory for faster rebuilds.
+          cacheDirectory: true,
+          plugins: ['react-hot-loader/babel']
+        },
+        //include: path.join(__dirname, 'src'),
+        exclude: nodeModulesDir
 			},
       { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader'},
       { test: /\.xml$/, use: {loader: 'xml-loader'} }

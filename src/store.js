@@ -1,19 +1,29 @@
 import { createStore, applyMiddleware, compose } from 'redux';
+import { connectRouter, routerMiddleware } from 'connected-react-router'
 import thunk from 'redux-thunk';
-//import rootReducer from './reducers';
-import rootReducer from './rootReducer.js'
+import createHistory from 'history/createBrowserHistory'
+import { rootReducer } from 'reducers/rootReducer.js'
+
+export const history = createHistory()
 
 const initialState = {};
-
-const middleware = [thunk];
-
-const store = createStore(
-  rootReducer,
-  initialState,
-  compose(
+const middleware = [thunk, routerMiddleware(history)];
+const myStore = createStore(
+    connectRouter(history)(rootReducer),
+    initialState,
+    compose(
     applyMiddleware(...middleware),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 );
 
-export default store;
+export default myStore
+
+// eventually use this when setting up code environments
+// if (process.env.NODE_ENV === 'development') {
+// const devToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION__
+//
+// if (typeof devToolsExtension === 'function') {
+// enhancers.push(devToolsExtension())
+// }
+// }
