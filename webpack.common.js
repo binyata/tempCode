@@ -14,22 +14,43 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
-
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
   resolve: {
-		extensions: [".js"],
+		extensions: [".js", ".scss", ".css"],
 		modules: [path.resolve(__dirname, 'src'), 'node_modules']
 	},
   entry: {
     app: ['babel-polyfill', `./src/index.js`]
   },
   module: {
+    // Use style-loader for dev mode
     rules: [
       {
         test: /\.css$/,
         use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'}
+          { loader: "style-loader" },
+          {
+            loader: "css-loader",
+            query: {
+              modules: true,
+              localIdentName: '[name]__[local]___[hash:base64:5]'
+            }
+          }
+        ]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          { loader: "style-loader" },
+          {
+            loader: "css-loader",
+            query: {
+              modules: true,
+              localIdentName: '[name]__[local]___[hash:base64:5]'
+            }
+          },
+          { loader: "sass-loader" }
         ]
       },
       { test: /\.html$/i, loader: 'html-loader'},
@@ -47,10 +68,32 @@ module.exports = {
         exclude: nodeModulesDir
 			},
       { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader'},
-      { test: /\.xml$/, use: {loader: 'xml-loader'} }
+      { test: /\.xml$/, use: {loader: 'xml-loader'} },
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'file-loader'
+        ]
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: [
+          'file-loader'
+        ]
+      }
     ]
   },
   plugins: [
+    // new MiniCssExtractPlugin({
+    //   // Options similar to the same options in webpackOptions.output
+    //   // both options are optional
+    //   filename: "[name].css",
+    //   chunkFilename: "[id].css"
+    // }),
     new CleanWebpackPlugin([`dist`]),
     new HtmlWebpackPlugin({
       title: 'Development',

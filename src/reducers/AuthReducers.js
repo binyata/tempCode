@@ -23,70 +23,8 @@ import isEmpty from 'lodash/isEmpty'
 import {createRequestReducer} from './CustomReducer'
 import appReducer from 'store'
 
-export function setupOcrAdmin (state = {}, action) {
-  switch (action.type) {
-    case SETUP_OCR_ADMIN:
-      return {
-        ...state,
-        response: action.response
-      }
-    default: return state
-  }
-}
+export const setupLoginInfo = {
 
-export function setupOcrAdminClient (state = {}, action) {
-  switch (action.type) {
-    case SETUP_OCR_ADMIN_CLIENT:
-      return {
-        ...state,
-        response: action.response
-      }
-    default: return state
-  }
-}
-
-export function setupOcrClient (state = {}, action) {
-  switch (action.type) {
-    case SETUP_OCR_CLIENT:
-      return {
-        ...state,
-        response: action.response
-      }
-    default: return state
-  }
-}
-
-export function setupOcrUser (state = {}, action) {
-  switch (action.type) {
-    case SETUP_OCR_USER:
-      return {
-        ...state,
-        response: action.response
-      }
-    default: return state
-  }
-}
-
-export function setupOcrJWTs (state = {}, action) {
-  switch (action.type) {
-    case SETUP_OCR_JWTS:
-      return {
-        ...state,
-        response: action.response
-      }
-    default: return state
-  }
-}
-
-export function setupOcrTokens (state = {}, action) {
-  switch (action.type) {
-    case SETUP_OCR_TOKENS:
-      return {
-        ...state,
-        response: action.response
-      }
-    default: return state
-  }
 }
 
 export const setupOcrCatalog = createRequestReducer({
@@ -118,12 +56,6 @@ export const setupOcrSubscriptions = createRequestReducer({
 });
 
 const generalStorage = combineReducers({
-  setupOcrAdmin,
-  setupOcrAdminClient,
-  setupOcrClient,
-  setupOcrUser,
-  setupOcrJWTs,
-  setupOcrTokens,
   setupOcrCatalog,
   setupOcrClientColors,
   setupOcrPromoTypes,

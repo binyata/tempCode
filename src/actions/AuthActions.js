@@ -1,5 +1,4 @@
 import axios from 'axios'
-import ImmutableState from 'utils/ImmutableState'
 import {
   SETUP_OCR_ADMIN,
   SETUP_OCR_ADMIN_CLIENT,

@@ -2,8 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {HashRouter, Route, Switch} from 'react-router-dom';
 import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import myStore, { history } from './store'
+import myStore from './store'
 import App from './App'
 
 // https://www.valentinog.com/blog/react-redux-tutorial-beginners/ redux tut
@@ -19,14 +18,22 @@ if (localStorage.jwtToken) {
 ReactDOM.render(
   (
     <Provider store={myStore}>
-      <ConnectedRouter history={history}>
-        <div>
-          <App/>
-        </div>
-      </ConnectedRouter>
+      <App/>
     </Provider>
   ), document.getElementById('id')
 );
+
+// ReactDOM.render(
+//   (
+//     <Provider store={myStore}>
+//       <ConnectedRouter history={history}>
+//         <div>
+//           <App/>
+//         </div>
+//       </ConnectedRouter>
+//     </Provider>
+//   ), document.getElementById('id')
+// );
 
 
 /*
